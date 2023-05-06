@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    container_name: MsSqlServer
+    environment:
+        MSSQL_SA_PASSWORD: "password"
+        ACCEPT_EULA: "Y"
+    volumes:  
+      - D:/Volumes/mssql:/var/opt/mssql/data
+    networks:
+      - db-backend
+      - backend-frontend
+
+  backend:
+    build:
+        context: ./backend
+        dockerfile: Dockerfile
+    ports:
+        - 5000:80
+    networks:
+        - db-backend
+        - backend-frontend
+
+  frontend:
+    build: 
+      context: ./frontend
+    ports:
+      - 3000:3000
+    networks:
+       - backend-frontend
+    tty: true
+    stdin_open: true
+
+
+
+networks:
+  db-backend:
+  backend-frontend:
+
